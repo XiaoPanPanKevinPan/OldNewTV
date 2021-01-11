@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.2.roc1100102</title>
+		<title>Online TV - v0.3.roc1100103</title>
 		<script>/*Control*/
 			function switchFullscreen(){
 				if(!document.fullscreenElement){
@@ -10,6 +10,230 @@
 					document.exitFullscreen();
 				}
 			}
+			
+			var presetChannelList = {
+				/*"8": {
+					name: "台視新聞 TTV News",
+					server: "Youtube",
+					ytCode: "xL0ch83RAK8",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},*/
+				"9": {
+					name: "大愛電視 DaAiVideo",
+					server: "Youtube",
+					ytCode: "oV_i3Hsl_zg",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"10": {
+					name: "中視新聞 CTV News",
+					server: "Youtube",
+					ytCode: "lSZZ3YRsW1w",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"12": {
+					name: "華視新聞 CTS News",
+					server: "Youtube",
+					ytCode: "-pvROC_MdYM",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"13": {
+					name: "公共電視 PTS News",
+					server: "Youtube",
+					ytCode: "ED4QXd5xAco",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"14": {
+					name: "公視台語台 PTS Taiwanese Hokkian",
+					server: "Youtube",
+					ytCode: "HyhkhY0tTjo",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"51": {
+					name: "東森新聞",
+					server: "Youtube",
+					ytCode: "63RmMXCd_bQ",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"52": {
+					name: "中天新聞 CTi News",
+					server: "Youtube",
+					ytCode: "9pWXAEZ5NLs",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"53": {
+					name: "民視新聞",
+					server: "Youtube",
+					ytCode: "XxJKnDLYZz4",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"54": {
+					name: "三立新聞",
+					server: "Youtube",
+					ytCode: "4ZVUmEUFwaY",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"55": {
+					name: "TVBS News",
+					server: "Youtube",
+					ytCode: "A4FbB8UhNRs",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"56": {
+					name: "TVBS",
+					server: "Youtube",
+					ytCode: "EmuMuVyAjh4",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"57": {
+					name: "東森財經",
+					server: "Youtube",
+					ytCode: "68lLQ7hkdzU",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"114": {
+					name: "大愛電視2 DaAiVideo 2",
+					server: "Youtube",
+					ytCode: "8ddDTi-gzQA",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"999":{
+					name: "TEST",
+					server: "Youtube",
+					ytCode: "ZNfsw_61pVM",
+					ytType: "Video",
+					ytAutoUpToDate: false
+				},
+				"994": {
+					name: "客家電視 Hakka TV",
+					server: "Youtube",
+					ytCode: "LWwepk1p5kE",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				},
+				"999":{
+					name: "TEST",
+					server: "Youtube",
+					ytCode: "EqhLSJko_6A",
+					ytType: "Video",
+					ytAutoUpToDate: true
+				}/*,
+				"995": {
+					name: "台灣地震監視 Taiwan Earthquake Monitor",
+					server: "Youtube",
+					ytCode: "GmnBAjLQFic",
+					ytType: "Stream",
+					ytAutoUpToDate: true
+				}*/
+			};
+			/*form
+				,
+				: {
+					name: "",
+					server: "Youtube [Future: m3u8]",
+					ytCode: "",
+					ytType: "Stream" || "Video" || "List",
+					m3u8URL: "",
+					ytAutoUpToDate: true
+				}
+			*/
+			
+			function switchChannel(number){
+				channel = presetChannelList[number];
+				if(typeof(channel)=="undefined"){
+					return -1;
+				}
+				if(channel.server = "Youtube"){
+					let loop = false;
+					if(channel.ytType == "List" || channel.ytType == "Video"){
+						loop = true;
+					}
+					ytPlayer = youtubeNewPlayer(channel.ytType, channel.ytCode, loop, channel.ytAutoUpToDate);
+					console.log("NewChannel!");
+ 					return 0;
+				}
+				return -1;
+			}
+			
+			var newChannelNumber = ""; /*the number of video*/
+			window.addEventListener("keydown", (event)=>{/*switch channel*/
+				whetherChangedNumberString = true;
+				if(
+					!event.ctrlKey &&
+					!event.altKey && 
+					!event.shiftKey && 
+					!event.metaKey &&  ["0","1","2","3","4","5","6","7","8","9"].includes(event.key)
+				){/*type in number*/
+					newChannelNumber += event.key;
+				}else{/*remove number at the end*/
+					switch(event.key){
+						case "Delete":
+							newChannelNumber = "";
+							break;
+						case "Backspace":
+							newChannelNumber = newChannelNumber.slice(0, newChannelNumber.length-1);
+							break;
+						case "Enter":
+							whetherChangedNumberString = false;
+							cleanAllNotifi();
+							if(switchChannel(newChannelNumber)==0 /*Success*/){
+								createNotifi(
+									"newChannelNumber", 
+									"OK", 
+									3, {
+										display: "inline", 
+										position: "fixed",
+										top: "2.5vh",
+										right: "2.5vh",
+										"background-color": "rgba(0,255,0,0.5)"
+								});
+							}else{/* -1, failed*/
+								createNotifi(
+									"newChannelNumber", 
+									"Not Exists", 
+									3, {
+										display: "inline", 
+										position: "fixed",
+										top: "2.5vh",
+										right: "2.5vh",
+										"background-color": "rgba(255,0,0,0.5)"
+								});
+							}
+							newChannelNumber = "";
+							break;
+						default:
+							whetherChangedNumberString = false;
+					}
+				}
+				/*show the number on the screen*/
+				if(whetherChangedNumberString == true){
+					createNotifi(
+						"newChannelNumber", 
+						newChannelNumber, 
+						5, {
+							display: "inline", 
+							position: "fixed",
+							top: "2.5vh",
+							right: "2.5vh"
+					});
+				}
+			});
+			
+			
+			
 		</script>
 		<script>/*Notification Manger*/
 			notiList = [];
@@ -21,7 +245,7 @@
 				if(msg!='' && msg!=undefined && msg!=null){
 					notifiHolder = document.querySelector("#notifiHolder");
 					presetStyleList = {
-						"background-color": "rgba(0,0,0,.5)",
+						"background": "rgba(0,0,0,.5)",
 						"color": "white",
 						"border-radius": "10px",
 						"padding": "10px",
@@ -41,7 +265,7 @@
 					
 					if(typeof lastingSecond == "number" && lastingSecond > 0 ){
 						window.setTimeout(()=>{noti.remove()}, lastingSecond * 1000);
-					}else if(typeof lastingSecond == "string" && lastingSecond == "forever"){
+					}else if(typeof lastingSecond == "string" && ["infinity", "unlimited", "unrestricted", "forever"].includes(lastingSecond)){x	
 						// do nothing
 					}else{
 						window.setTimeout(()=>{noti.remove()}, 10000);
@@ -77,30 +301,51 @@
 				// YouTube ytPlayer after the API code downloads.
 				var ytPlayer;
 				function onYouTubePlayerAPIReady(){
+					ytPlayer = youtubeNewPlayer("Stream", "9pWXAEZ5NLs", true, true);
+				}
+				function youtubeNewPlayer(type, ID, whetherToLoop, whetherAutoGetUpToDate){
+					if(typeof(ytPlayer) != "undefined"){
+						ytPlayer.destroy();
+					}
+					console.log("debug! %d", (whetherToLoop)?1:0);
+					
+					let playerVars = {
+						controls: 0, 
+						disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
+						iv_load_policy:3,
+						rel: 0,
+						fs: 0,
+					}
+					if(type=="List"){
+						playerVars.listType = "playlist";
+						playerVars.list = ID;
+					}
+					if(whetherToLoop == true){
+						playerVars.loop= "1";
+						if(type=="Video"){
+							playerVars.playlist = ID;
+						}
+					}
+					
 					ytPlayer = new YT.Player("ytPlayer", {
 						height: "100%",
 						width: "100%",
-						videoId: "9pWXAEZ5NLs",
-						playerVars: {
-							controls: 0, 
-							disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
-							iv_load_policy:3,
-							rel: 0,
-							fs: 0
-						},
+						videoId: (type=="Stream" || type=="Video")?ID:"",
+						playerVars: playerVars,
 						events:{
 							"onReady": (event)=>{
 								/*autoplay & try to get up-to-date*/
 								ytPlayer.playVideo();
-								ytPlayer.toggledEventID = [];
+								ytPlayer.toggledEventID = []; /*That is for "onStateChange"*/
 							},
-							"onStateChange": (event)=>{
+							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
 								var state = event.data;
 								if(
 									state == -1 /*unstarted*/ ||
 									state == YT.PlayerState.PAUSED ||
 									state == YT.PlayerState.CUED
 								){
+									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use ytPlayer.removeEventListener("onStateChange", a) because this part of the api seems to be broken.*/
 									var ID = Date.now();
 									var a = (event) => {
 										if(ytPlayer.toggledEventID.includes(ID)){
@@ -112,19 +357,15 @@
 											state == YT.PlayerState.PLAYING ||
 											state == YT.PlayerState.BUFFERING
 										){
-											console.log("state: %d && step 2", state);
 											ytPlayer.getUpToDate();
 										}
 										ytPlayer.toggledEventID.push(ID);
-										console.log("a is removed");
 										return;
 									};
-									console.log("state: %d && step 1", state);
 									ytPlayer.addEventListener("onStateChange", a);
-									console.log("a is created");
 									return;
 								}
-							}
+							}:(event)=>{}
 						}
 					});/*video control shortcuts*/
 					ytPlayer.playAndPause = ()=>{
@@ -140,21 +381,54 @@
 					}
 					window.addEventListener('keydown', (event)=>{
 						switch(event.key){
+							/*Volume Up*/
 							case "+":
-							case "ArrowUp":
-								ytPlayer.setVolume(ytPlayer.getVolume() + 5);
-								createNotifi("volume", "Vol:" + ytPlayer.getVolume() + "%", 5);
+							case "ArrowRight":
+								var vol = ytPlayer.getVolume();
+								ytPlayer.setVolume(vol + 5);
+								createNotifi(
+									"volume", 
+									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%", 
+									5, {
+										display: "inline", 
+										position: "fixed",
+										top: "2.5vh",
+										left: "2.5vh",
+								});
 								break;
+							
+							/*Volume Down*/
 							case "-":
-							case "ArrowDown":
-								ytPlayer.setVolume(ytPlayer.getVolume() - 5);
-								createNotifi("volume", "Vol:" + ytPlayer.getVolume() + "%", 5);
+							case "ArrowLeft":
+								var vol = ytPlayer.getVolume();
+								ytPlayer.setVolume(vol + 5);
+								ytPlayer.setVolume(vol - 5);
+								createNotifi(
+									"volume", 
+									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%", 
+									5, {
+										display: "inline", 
+										position: "fixed",
+										top: "2.5vh",
+										left: "2.5vh",
+								});
 								break;
+							
+							/*Pause & Play*/
 							case " ":
 								ytPlayer.playAndPause();
 								break;
+							
+							/*FullScreen*/
+							case "f":
+								switchFullscreen();
+								
+							/*Clean the notification*/
+							case "Escape":
+								cleanAllNotifi();
 						}
 					});
+					return ytPlayer;
 				}
 			</script>
 		</div>
