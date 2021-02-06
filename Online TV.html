@@ -1,316 +1,137 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.3.roc1100103</title>
-		<script>/*Control*/
-			function switchFullscreen(){
-				if(!document.fullscreenElement){
-					document.documentElement.requestFullscreen();
-				}else{
-					document.exitFullscreen();
-				}
-			}
-			
-			var presetChannelList = {
+		<title>Online TV - v0.4.roc1100205</title>
+		<script>/*Setting*/
+			var presetChannelList = { /*Global Variable*/
 				/*"8": {
 					name: "台視新聞 TTV News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "xL0ch83RAK8",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},*/
 				"9": {
 					name: "大愛電視 DaAiVideo",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "oV_i3Hsl_zg",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"10": {
 					name: "中視新聞 CTV News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "lSZZ3YRsW1w",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"12": {
 					name: "華視新聞 CTS News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "-pvROC_MdYM",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"13": {
 					name: "公共電視 PTS News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "ED4QXd5xAco",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"14": {
 					name: "公視台語台 PTS Taiwanese Hokkian",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "HyhkhY0tTjo",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"51": {
 					name: "東森新聞",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "63RmMXCd_bQ",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"52": {
 					name: "中天新聞 CTi News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "9pWXAEZ5NLs",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"53": {
 					name: "民視新聞",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "XxJKnDLYZz4",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"54": {
 					name: "三立新聞",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "4ZVUmEUFwaY",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"55": {
 					name: "TVBS News",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "A4FbB8UhNRs",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"56": {
 					name: "TVBS",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "EmuMuVyAjh4",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"57": {
 					name: "東森財經",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "68lLQ7hkdzU",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"114": {
 					name: "大愛電視2 DaAiVideo 2",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "8ddDTi-gzQA",
-					ytType: "Stream",
-					ytAutoUpToDate: true
-				},
-				"999":{
-					name: "TEST",
-					server: "Youtube",
-					ytCode: "ZNfsw_61pVM",
-					ytType: "Video",
-					ytAutoUpToDate: false
+					ytType: "Stream"
 				},
 				"994": {
 					name: "客家電視 Hakka TV",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "LWwepk1p5kE",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				},
 				"999":{
-					name: "TEST",
-					server: "Youtube",
+					name: "TEST - You Will Be Okay",
+					server: "yt",
 					ytCode: "EqhLSJko_6A",
-					ytType: "Video",
-					ytAutoUpToDate: true
+					ytType: "Video"
 				}/*,
 				"995": {
 					name: "台灣地震監視 Taiwan Earthquake Monitor",
-					server: "Youtube",
+					server: "yt",
 					ytCode: "GmnBAjLQFic",
-					ytType: "Stream",
-					ytAutoUpToDate: true
+					ytType: "Stream"
 				}*/
 			};
 			/*form
 				,
 				: {
 					name: "",
-					server: "Youtube [Future: m3u8]",
+					server: "yt [Future: m3u8]",
 					ytCode: "",
 					ytType: "Stream" || "Video" || "List",
 					m3u8URL: "",
 					ytAutoUpToDate: true
 				}
 			*/
-			
-			function switchChannel(number){
-				channel = presetChannelList[number];
-				if(typeof(channel)=="undefined"){
-					return -1;
-				}
-				if(channel.server = "Youtube"){
-					let loop = false;
-					if(channel.ytType == "List" || channel.ytType == "Video"){
-						loop = true;
-					}
-					ytPlayer = youtubeNewPlayer(channel.ytType, channel.ytCode, loop, channel.ytAutoUpToDate);
-					console.log("NewChannel!");
- 					return 0;
-				}
-				return -1;
-			}
-			
-			var newChannelNumber = ""; /*the number of video*/
-			window.addEventListener("keydown", (event)=>{/*switch channel*/
-				whetherChangedNumberString = true;
-				if(
-					!event.ctrlKey &&
-					!event.altKey && 
-					!event.shiftKey && 
-					!event.metaKey &&  ["0","1","2","3","4","5","6","7","8","9"].includes(event.key)
-				){/*type in number*/
-					newChannelNumber += event.key;
-				}else{/*remove number at the end*/
-					switch(event.key){
-						case "Delete":
-							newChannelNumber = "";
-							break;
-						case "Backspace":
-							newChannelNumber = newChannelNumber.slice(0, newChannelNumber.length-1);
-							break;
-						case "Enter":
-							whetherChangedNumberString = false;
-							cleanAllNotifi();
-							if(switchChannel(newChannelNumber)==0 /*Success*/){
-								createNotifi(
-									"newChannelNumber", 
-									"OK", 
-									3, {
-										display: "inline", 
-										position: "fixed",
-										top: "2.5vh",
-										right: "2.5vh",
-										"background-color": "rgba(0,255,0,0.5)"
-								});
-							}else{/* -1, failed*/
-								createNotifi(
-									"newChannelNumber", 
-									"Not Exists", 
-									3, {
-										display: "inline", 
-										position: "fixed",
-										top: "2.5vh",
-										right: "2.5vh",
-										"background-color": "rgba(255,0,0,0.5)"
-								});
-							}
-							newChannelNumber = "";
-							break;
-						default:
-							whetherChangedNumberString = false;
-					}
-				}
-				/*show the number on the screen*/
-				if(whetherChangedNumberString == true){
-					createNotifi(
-						"newChannelNumber", 
-						newChannelNumber, 
-						5, {
-							display: "inline", 
-							position: "fixed",
-							top: "2.5vh",
-							right: "2.5vh"
-					});
-				}
-			});
-			
-			
-			
+
 		</script>
-		<script>/*Notification Manger*/
-			notiList = [];
-			function createNotifi(id, msg, lastingSecond, styleList){
-				if(id!='' && id!=undefined && id!=null && id != "@TEMP" && typeof(notiList[id]) != "undefined"){
-					notiList[id].remove();
-				}
-			
-				if(msg!='' && msg!=undefined && msg!=null){
-					notifiHolder = document.querySelector("#notifiHolder");
-					presetStyleList = {
-						"background": "rgba(0,0,0,.5)",
-						"color": "white",
-						"border-radius": "10px",
-						"padding": "10px",
-						"font-size": "36px",
-						"margin": "10px"
-					};
-					var noti = document.createElement("div");
-
-					noti.innerHTML = msg;
-					for(var key in presetStyleList){
-						noti.style[key] = presetStyleList[key];
-					}
-					for(var key in styleList){
-						noti.style[key] = styleList[key];
-					}
-					notifiHolder.appendChild(noti);
-					
-					if(typeof lastingSecond == "number" && lastingSecond > 0 ){
-						window.setTimeout(()=>{noti.remove()}, lastingSecond * 1000);
-					}else if(typeof lastingSecond == "string" && ["infinity", "unlimited", "unrestricted", "forever"].includes(lastingSecond)){x	
-						// do nothing
-					}else{
-						window.setTimeout(()=>{noti.remove()}, 10000);
-					}
-
-					notiList[id] = noti;
-					return noti;
-				}else{
-					return "notiRemoved";
-				}
-
-			}
-			function cleanAllNotifi(){
-				notifiHolder = document.querySelector("#notifiHolder");
-				notifiHolder.innerHTML = null;
-			}
-		</script>
-	</head>
-	<body style="margin:0; padding: 0">
-		<script>document.body.addEventListener("blur", ()=>{console.log("blur!");document.body.focus();});
-			setTimeout(()=>{document.body.focus();}, 50);
-		</script>
-		<div id="playerHolder" style="width: 100vw; height: 100vh; margin: 0; padding: 0">
-			<div id="ytPlayer"></div>
-			<script>/*Load & auto-play youtube video*/
-				// Load the IFrame Player API code asynchronously.
-				var tag = document.createElement('script');
-				tag.src = "https://www.youtube.com/player_api";
-				var firstScriptTag = document.getElementsByTagName('script')[0];
-				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-				// Replace #ytPlayer element with an <iframe> and
-				// YouTube ytPlayer after the API code downloads.
-				var ytPlayer;
-				function onYouTubePlayerAPIReady(){
-					ytPlayer = youtubeNewPlayer("Stream", "9pWXAEZ5NLs", true, true);
-				}
-				function youtubeNewPlayer(type, ID, whetherToLoop, whetherAutoGetUpToDate){
+		<script>/*Control*/
+			player = {}; // Global Variable.
+			playerStructure = { /*the structure of the player*/
+				yt: (type, ID, whetherToLoop, whetherAutoGetUpToDate)=>{
 					if(typeof(ytPlayer) != "undefined"){
 						ytPlayer.destroy();
 					}
 					console.log("debug! %d", (whetherToLoop)?1:0);
-					
+
 					let playerVars = {
-						controls: 0, 
+						controls: 0,
 						disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
 						iv_load_policy:3,
 						rel: 0,
@@ -326,7 +147,7 @@
 							playerVars.playlist = ID;
 						}
 					}
-					
+
 					ytPlayer = new YT.Player("ytPlayer", {
 						height: "100%",
 						width: "100%",
@@ -336,7 +157,7 @@
 							"onReady": (event)=>{
 								/*autoplay & try to get up-to-date*/
 								ytPlayer.playVideo();
-								ytPlayer.toggledEventID = []; /*That is for "onStateChange"*/
+								ytPlayer.toggledEventID = []; /**/
 							},
 							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
 								var state = event.data;
@@ -351,7 +172,7 @@
 										if(ytPlayer.toggledEventID.includes(ID)){
 											return;
 										}
-										
+
 										var state = event.data;
 										if(
 											state == YT.PlayerState.PLAYING ||
@@ -387,16 +208,16 @@
 								var vol = ytPlayer.getVolume();
 								ytPlayer.setVolume(vol + 5);
 								createNotifi(
-									"volume", 
-									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%", 
+									"volume",
+									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%",
 									5, {
-										display: "inline", 
+										display: "inline",
 										position: "fixed",
 										top: "2.5vh",
 										left: "2.5vh",
 								});
 								break;
-							
+
 							/*Volume Down*/
 							case "-":
 							case "ArrowLeft":
@@ -404,25 +225,25 @@
 								ytPlayer.setVolume(vol + 5);
 								ytPlayer.setVolume(vol - 5);
 								createNotifi(
-									"volume", 
-									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%", 
+									"volume",
+									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%",
 									5, {
-										display: "inline", 
+										display: "inline",
 										position: "fixed",
 										top: "2.5vh",
 										left: "2.5vh",
 								});
 								break;
-							
+
 							/*Pause & Play*/
 							case " ":
 								ytPlayer.playAndPause();
 								break;
-							
+
 							/*FullScreen*/
 							case "f":
-								switchFullscreen();
-								
+								fullscreen("switch");
+
 							/*Clean the notification*/
 							case "Escape":
 								cleanAllNotifi();
@@ -430,6 +251,185 @@
 					});
 					return ytPlayer;
 				}
+			};
+
+			function fullscreen(newState){
+				if(newState !== "undefined"){
+					if(newState == true || newState == "on"){ //turn on fullscreen
+						document.documentElement.requestFullscreen();
+					}else if(newState == false || newState == "off"){ //turn off fullscreen
+						document.exitFullscreen();
+					}if(newState == "switch"){ //switch fullscreen
+						if(!document.fullscreenElement){
+							document.documentElement.requestFullscreen();
+						}else{
+							document.exitFullscreen();
+						}
+					}
+				}
+				return (!document.fullscreenElement)?false:true; //return fullscreen state
+			}
+
+			function switchChannel(number){
+				channel = presetChannelList[number]; //get info of the channel
+				if(typeof(channel)=="undefined"){
+					console.log("ERR: The required channel doesn't exist.");
+					return -1;
+				}
+				if(channel.server = "yt"){
+					let loop = false, ytAutoUpToDate = false;
+					if(channel.ytType == "List" || channel.ytType == "Video"){
+						loop = true;
+					}else if(channel.ytType == "Stream"){
+						ytAutoUpToDate = true;
+					}else{
+						console.log("ERR: \"ytType\" should be one of [\"List\", \"Video\", \"Stream\"], instead of \"%s\".", channel.ytType);
+						return -1;
+					}
+					ytPlayer = playerStructure.yt(channel.ytType, channel.ytCode, loop, ytAutoUpToDate);
+					console.log("O K: NewChannel!");
+ 					return 0;
+				}
+				console.log("ERR: \"server\" should be one of [\"yt\"(, \"m3u8\")], instead of \"%s\".", channel.server);
+				return -1;
+			}
+
+			var newChannelNumber = ""; /*the number of video*/
+			window.addEventListener("keydown", (event)=>{/*switch channel*/
+				whetherChangedNumberString = true;
+				if(
+					!event.ctrlKey &&
+					!event.altKey &&
+					!event.shiftKey &&
+					!event.metaKey &&  ["0","1","2","3","4","5","6","7","8","9"].includes(event.key)
+				){/*type in number*/
+					newChannelNumber += event.key;
+				}else{/*remove number at the end*/
+					switch(event.key){
+						case "Delete":
+							newChannelNumber = "";
+							break;
+						case "Backspace":
+							newChannelNumber = newChannelNumber.slice(0, newChannelNumber.length-1);
+							break;
+						case "Enter":
+							whetherChangedNumberString = false;
+							cleanAllNotifi();
+							if(switchChannel(newChannelNumber)==0 /*Success*/){
+								createNotifi(
+									"newChannelNumber",
+									"OK",
+									3, {
+										display: "inline",
+										position: "fixed",
+										top: "2.5vh",
+										right: "2.5vh",
+										"background-color": "rgba(0,255,0,0.5)"
+								});
+							}else{/* -1, failed*/
+								createNotifi(
+									"newChannelNumber",
+									"Not Exists",
+									3, {
+										display: "inline",
+										position: "fixed",
+										top: "2.5vh",
+										right: "2.5vh",
+										"background-color": "rgba(255,0,0,0.5)"
+								});
+							}
+							newChannelNumber = "";
+							break;
+						default:
+							whetherChangedNumberString = false;
+					}
+				}
+				/*show the number on the screen*/
+				if(whetherChangedNumberString == true){
+					createNotifi(
+						"newChannelNumber",
+						newChannelNumber,
+						5, {
+							display: "inline",
+							position: "fixed",
+							top: "2.5vh",
+							right: "2.5vh"
+					});
+				}
+			});
+
+
+
+		</script>
+		<script>/*Notification Manger*/
+			notiList = [];
+			function createNotifi(id, msg, lastingSecond, styleList){
+				if(typeof(id)!="undefined" && id!='' && id!=null && id != "@TEMP" && typeof(notiList[id]) != "undefined"){
+					notiList[id].remove();
+				}
+
+				if( typeof(msg)!="undefined" && msg!='' && msg!=null){
+					notifiHolder = document.querySelector("#notifiHolder");
+					presetStyleList = {
+						"background": "rgba(0,0,0,.5)",
+						"color": "white",
+						"border-radius": "10px",
+						"padding": "10px",
+						"font-size": "36px",
+						"margin": "10px"
+					};
+					var noti = document.createElement("div");
+
+					noti.innerHTML = msg;
+					for(var key in presetStyleList){
+						noti.style[key] = presetStyleList[key];
+					}
+					for(var key in styleList){
+						noti.style[key] = styleList[key];
+					}
+					notifiHolder.appendChild(noti);
+
+					if(typeof lastingSecond == "number" && lastingSecond > 0 ){
+						window.setTimeout(()=>{noti.remove()}, lastingSecond * 1000);
+					}else if(typeof lastingSecond == "string" && ["infinity", "unlimited", "unrestricted", "forever"].includes(lastingSecond)){x
+						// do nothing
+					}else{
+						window.setTimeout(()=>{noti.remove()}, 10000);
+					}
+
+					notiList[id] = noti;
+					return noti;
+				}else{
+					return "notiRemoved";
+				}
+
+			}
+			function cleanAllNotifi(){
+				notifiHolder = document.querySelector("#notifiHolder");
+				notifiHolder.innerHTML = null;
+			}
+		</script>
+	</head>
+	<body style="margin:0; padding: 0; box-sizing: border-box;">
+		<script>document.body.addEventListener("blur", ()=>{console.log("blur!");document.body.focus();});
+			setTimeout(()=>{document.body.focus();}, 50);
+		</script>
+		<div id="playerHolder" style="width: 100vw; height: 100vh; line-height:0;">
+			<div id="ytPlayer"></div>
+			<script>/*Load & auto-play youtube video*/
+				// Load the IFrame Player API code asynchronously.
+				var tag = document.createElement('script');
+				tag.src = "https://www.youtube.com/player_api";
+				var firstScriptTag = document.getElementsByTagName('script')[0];
+				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+				// Replace #ytPlayer element with an <iframe> and
+				// YouTube ytPlayer after the API code downloads.
+				var ytPlayer;
+				function onYouTubePlayerAPIReady(){
+					ytPlayer = playerStructure.yt("Stream", "9pWXAEZ5NLs", true, true);
+				}
+
 			</script>
 		</div>
 		<div id="playerCover" style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; padding: 0; margin: 0; opacity: 0">
@@ -449,7 +449,7 @@
 									counter = 0;
 								}, 250);
 							}else if(counter >= 2){/*fullscreen*/
-								switchFullscreen();
+								fullscreen("switch");
 								counter=0;
 							}
 						}
@@ -460,6 +460,6 @@
 		</div>
 		<div id="notifiHolder" style="width: 100vw; position: absolute; height:0; top: 10vh; left: 0; padding: 0; margin: 0; text-align: center; pointer-events: none">
 		</div>
-		
+
 	</body>
 </html>
