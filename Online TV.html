@@ -2,158 +2,11 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.4.roc1100303</title>
+		<title>Online TV - v0.4.roc1100310_1427</title>
 		<!-- The preset settings, such as channel-number pairs. --> <script src="presetSettings.js"></script>
-		<script>/*Control*/
-			player = {}; // Global Variable.
-			playerStructure = { /*the structure of the player*/
-				yt: (type, ID, whetherToLoop, whetherAutoGetUpToDate)=>{
-					if(typeof(ytPlayer) != "undefined"){
-						ytPlayer.destroy();
-					}
-					console.log("debug! %d", (whetherToLoop)?1:0);
-
-					let playerVars = {
-						controls: 0,
-						disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
-						iv_load_policy:3,
-						rel: 0,
-						fs: 0,
-					}
-					if(type=="List"){
-						playerVars.listType = "playlist";
-						playerVars.list = ID;
-					}
-					if(whetherToLoop == true){
-						playerVars.loop= "1";
-						if(type=="Video"){
-							playerVars.playlist = ID;
-						}
-					}
-
-					ytPlayer = new YT.Player("ytPlayer", {
-						height: "100%",
-						width: "100%",
-						videoId: (type=="Stream" || type=="Video")?ID:"",
-						playerVars: playerVars,
-						events:{
-							"onReady": (event)=>{
-								/*autoplay & try to get up-to-date*/
-								ytPlayer.playVideo();
-								ytPlayer.toggledEventID = []; /**/
-							},
-							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
-								var state = event.data;
-								if(
-									state == -1 /*unstarted*/ ||
-									state == YT.PlayerState.PAUSED ||
-									state == YT.PlayerState.CUED
-								){
-									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use ytPlayer.removeEventListener("onStateChange", a) because this part of the api seems to be broken.*/
-									var ID = Date.now();
-									var a = (event) => {
-										if(ytPlayer.toggledEventID.includes(ID)){
-											return;
-										}
-
-										var state = event.data;
-										if(
-											state == YT.PlayerState.PLAYING ||
-											state == YT.PlayerState.BUFFERING
-										){
-											ytPlayer.getUpToDate();
-										}
-										ytPlayer.toggledEventID.push(ID);
-										return;
-									};
-									ytPlayer.addEventListener("onStateChange", a);
-									return;
-								}
-							}:(event)=>{}
-						}
-					});/*video control shortcuts*/
-					ytPlayer.playAndPause = ()=>{
-						if(ytPlayer.getPlayerState() == YT.PlayerState.PAUSED){
-							ytPlayer.playVideo();
-						}else{
-							ytPlayer.pauseVideo();
-						}
-					};
-					ytPlayer.getUpToDate = () => {
-						ytPlayer.setPlaybackRate(2);/*Once it gets to the newest, the video would pause for seconds and auto-set the speed to 1*/
-						notifi = createNotifi("adjusting", "正在縮短時間差，請稍待……");
-					}
-					window.addEventListener('keydown', (event)=>{
-						switch(event.key){
-							/*Volume Up*/
-							case "+":
-							case "ArrowRight":
-								var vol = ytPlayer.getVolume();
-								ytPlayer.setVolume(vol + 5);
-								createNotifi(
-									"volume",
-									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%",
-									5, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										left: "2.5vh",
-								});
-								break;
-
-							/*Volume Down*/
-							case "-":
-							case "ArrowLeft":
-								var vol = ytPlayer.getVolume();
-								ytPlayer.setVolume(vol + 5);
-								ytPlayer.setVolume(vol - 5);
-								createNotifi(
-									"volume",
-									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%",
-									5, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										left: "2.5vh",
-								});
-								break;
-
-							/*Pause & Play*/
-							case " ":
-								ytPlayer.playAndPause();
-								break;
-
-							/*FullScreen*/
-							case "f":
-								fullscreen("switch");
-
-							/*Clean the notification*/
-							case "Escape":
-								cleanAllNotifi();
-						}
-					});
-					return ytPlayer;
-				}
-			};
-
-			function fullscreen(newState){
-				if(newState !== "undefined"){
-					if(newState == true || newState == "on"){ //turn on fullscreen
-						document.documentElement.requestFullscreen();
-					}else if(newState == false || newState == "off"){ //turn off fullscreen
-						document.exitFullscreen();
-					}if(newState == "switch"){ //switch fullscreen
-						if(!document.fullscreenElement){
-							document.documentElement.requestFullscreen();
-						}else{
-							document.exitFullscreen();
-						}
-					}
-				}
-				return (!document.fullscreenElement)?false:true; //return fullscreen state
-			}
-
+		<script>/*Channel Manager*/
 			function switchChannel(number){
+				
 				channel = presetChannelList[number]; //get info of the channel
 				if(typeof(channel)=="undefined"){
 					console.log("ERR: The required channel doesn't exist.");
@@ -169,7 +22,12 @@
 						console.log("ERR: \"ytType\" should be one of [\"List\", \"Video\", \"Stream\"], instead of \"%s\".", channel.ytType);
 						return -1;
 					}
-					ytPlayer = playerStructure.yt(channel.ytType, channel.ytCode, loop, ytAutoUpToDate);
+					
+					if(player.server = "yt"){
+						player.destroy();
+					}
+					
+					player =  new playerStructure.yt(channel.ytType, channel.ytCode, loop, ytAutoUpToDate);
 					console.log("O K: NewChannel!");
  					return 0;
 				}
@@ -178,7 +36,7 @@
 			}
 
 			var newChannelNumber = ""; /*the number of video*/
-			window.addEventListener("keydown", (event)=>{/*switch channel*/
+			window.addEventListener("keydown", (event)=>{/*when user is switching the channel*/
 				whetherChangedNumberString = true;
 				if(
 					!event.ctrlKey &&
@@ -240,6 +98,169 @@
 					});
 				}
 			});
+
+		</script>
+		<script>/*Control*/
+			player = {}; // Global Variable.
+			playerStructure = { /*the structure of the player*/
+				yt: function(type, ID, whetherToLoop, whetherAutoGetUpToDate){
+					this.server = "yt";
+					
+					/*Config the YT Player*/
+					let playerVars = {
+						controls: 0,
+						disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
+						iv_load_policy:3,
+						rel: 0,
+						fs: 0,
+					}
+					if(type=="List"){
+						playerVars.listType = "playlist";
+						playerVars.list = ID;
+					}
+					if(whetherToLoop == true){
+						playerVars.loop= "1";
+						if(type=="Video"){
+							playerVars.playlist = ID;
+						}
+					}
+
+					/*Create the YT Player*/
+					this.realPlayer = new YT.Player("ytPlayer", {
+						height: "100%",
+						width: "100%",
+						videoId: (type=="Stream" || type=="Video")?ID:"",
+						playerVars: playerVars,
+						events:{
+							"onReady": (event)=>{
+								/*autoplay & try to get up-to-date*/
+								this.realPlayer.playVideo();
+								this.realPlayer.toggledEventID = []; /**/
+							},
+							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
+								var state = event.data;
+								if(
+									state == -1 /*unstarted*/ ||
+									state == YT.PlayerState.PAUSED ||
+									state == YT.PlayerState.CUED
+								){
+									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use this.realPlayer.removeEventListener("onStateChange", func) because this part of the api seems to be broken.*/
+									var ID = Date.now();
+									var func = (event) => {
+										if(this.realPlayer.toggledEventID.includes(ID)){
+											return;
+										}
+
+										var state = event.data;
+										if(
+											state == YT.PlayerState.PLAYING ||
+											state == YT.PlayerState.BUFFERING
+										){
+											this.realPlayer.getUpToDate();
+										}
+										this.realPlayer.toggledEventID.push(ID);
+										return;
+									};
+									this.realPlayer.addEventListener("onStateChange", func);
+									return;
+								}
+							}:(event)=>{}
+						}
+					});
+					
+					/*hook the operating functions on to the server api functions*/
+					this.destroy = ()=>{
+						this.realPlayer.destroy();
+					};
+					this.volume = (vol)=>{
+						if(typeof(vol)=="NUMBER" && 0<=vol && vol<=100){
+							this.realPlayer.setVolume(vol);
+						}
+						return this.realPlayer.getVolume();
+						/*A known issue: The returned value isn't the new volume but the old one.*/
+					}
+					
+					/*video control shortcuts*/
+					this.realPlayer.playAndPause = ()=>{
+						if(this.realPlayer.getPlayerState() == YT.PlayerState.PAUSED){
+							this.realPlayer.playVideo();
+						}else{
+							this.realPlayer.pauseVideo();
+						}
+					};
+					this.realPlayer.getUpToDate = () => {
+						this.realPlayer.setPlaybackRate(2);/*Once it gets to the newest, the video would pause for seconds and auto-set the speed to 1*/
+						notifi = createNotifi("adjusting", "正在縮短時間差，請稍待……");
+					}
+					window.addEventListener('keydown', (event)=>{
+						switch(event.key){
+							/*Volume Up*/
+							case "+":
+							case "ArrowRight":
+								var vol = this.realPlayer.getVolume();
+								this.realPlayer.setVolume(vol + 5);
+								createNotifi(
+									"volume",
+									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%",
+									5, {
+										display: "inline",
+										position: "fixed",
+										top: "2.5vh",
+										left: "2.5vh",
+								});
+								break;
+
+							/*Volume Down*/
+							case "-":
+							case "ArrowLeft":
+								var vol = this.realPlayer.getVolume();
+								this.realPlayer.setVolume(vol + 5);
+								this.realPlayer.setVolume(vol - 5);
+								createNotifi(
+									"volume",
+									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%",
+									5, {
+										display: "inline",
+										position: "fixed",
+										top: "2.5vh",
+										left: "2.5vh",
+								});
+								break;
+
+							/*Pause & Play*/
+							case " ":
+								this.realPlayer.playAndPause();
+								break;
+
+							/*FullScreen*/
+							case "f":
+								fullscreen("switch");
+
+							/*Clean the notification*/
+							case "Escape":
+								cleanAllNotifi();
+						}
+					});
+					//return this;
+				}
+			};
+
+			function fullscreen(newState){
+				if(newState !== "undefined"){
+					if(newState == true || newState == "on"){ //turn on fullscreen
+						document.documentElement.requestFullscreen();
+					}else if(newState == false || newState == "off"){ //turn off fullscreen
+						document.exitFullscreen();
+					}if(newState == "switch"){ //switch fullscreen
+						if(!document.fullscreenElement){
+							document.documentElement.requestFullscreen();
+						}else{
+							document.exitFullscreen();
+						}
+					}
+				}
+				return (!document.fullscreenElement)?false:true; //return fullscreen state
+			}
 
 
 
@@ -308,9 +329,9 @@
 
 				// Replace #ytPlayer element with an <iframe> and
 				// YouTube ytPlayer after the API code downloads.
-				var ytPlayer;
+				//var ytPlayer;   //it is replace by "player"
 				function onYouTubePlayerAPIReady(){
-					ytPlayer = playerStructure.yt("Stream", "5tQBwbyQ-Fw", true, true);
+					player = new playerStructure.yt("Stream", "5tQBwbyQ-Fw", true, true);
 				}
 
 			</script>
@@ -328,7 +349,7 @@
 							counter += 1;
 							if(counter == 1){
 								timeout = setTimeout(()=>{/*play or pause video*/
-									ytPlayer.playAndPause();
+									player.playAndPause();
 									counter = 0;
 								}, 250);
 							}else if(counter >= 2){/*fullscreen*/
