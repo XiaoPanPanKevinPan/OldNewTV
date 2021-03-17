@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.4.roc1100310_1427</title>
-		<!-- The preset settings, such as channel-number pairs. --> <script src="presetSettings.js"></script>
+		<title>Online TV - v0.4.roc1100317_1514</title>
+		<script src="presetSettings.js"><!-- The preset settings, such as channel-number pairs. --></script>
 		<script>/*Channel Manager*/
 			function switchChannel(number){
 				
@@ -126,7 +126,7 @@
 					}
 
 					/*Create the YT Player*/
-					this.realPlayer = new YT.Player("ytPlayer", {
+					this.body = new YT.Player("ytPlayer", {
 						height: "100%",
 						width: "100%",
 						videoId: (type=="Stream" || type=="Video")?ID:"",
@@ -134,8 +134,8 @@
 						events:{
 							"onReady": (event)=>{
 								/*autoplay & try to get up-to-date*/
-								this.realPlayer.playVideo();
-								this.realPlayer.toggledEventID = []; /**/
+								this.body.playVideo();
+								this.body.toggledEventID = []; /**/
 							},
 							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
 								var state = event.data;
@@ -144,10 +144,10 @@
 									state == YT.PlayerState.PAUSED ||
 									state == YT.PlayerState.CUED
 								){
-									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use this.realPlayer.removeEventListener("onStateChange", func) because this part of the api seems to be broken.*/
+									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use this.body.removeEventListener("onStateChange", func) because this part of the api seems to be broken.*/
 									var ID = Date.now();
 									var func = (event) => {
-										if(this.realPlayer.toggledEventID.includes(ID)){
+										if(this.body.toggledEventID.includes(ID)){
 											return;
 										}
 
@@ -156,40 +156,53 @@
 											state == YT.PlayerState.PLAYING ||
 											state == YT.PlayerState.BUFFERING
 										){
-											this.realPlayer.getUpToDate();
+											this.body.getUpToDate();
 										}
-										this.realPlayer.toggledEventID.push(ID);
+										this.body.toggledEventID.push(ID);
 										return;
 									};
-									this.realPlayer.addEventListener("onStateChange", func);
+									this.body.addEventListener("onStateChange", func);
 									return;
 								}
 							}:(event)=>{}
 						}
 					});
 					
-					/*hook the operating functions on to the server api functions*/
+					/*the united and universal functions*/
+					this.dom = document.querySelector("ytPlayer");
 					this.destroy = ()=>{
-						this.realPlayer.destroy();
+						this.body.destroy();
 					};
 					this.volume = (vol)=>{
 						if(typeof(vol)=="NUMBER" && 0<=vol && vol<=100){
-							this.realPlayer.setVolume(vol);
+							this.body.setVolume(vol);
 						}
-						return this.realPlayer.getVolume();
+						return this.body.getVolume();
 						/*A known issue: The returned value isn't the new volume but the old one.*/
+					}
+					this.mute = (state) =>{
+						if(typeof(state)!="undefined"){
+							if(["on", true, 1, "1"].includes(state)){
+								this.body.mute();
+							}else if(["off", false, 0, "0"].includes(state)){
+								this.body.unMute();
+							}else if("switch"){
+								(this.body.isMuted())?this.body.unMute():this.body.mute();
+							}
+						}
+						return this.body.isMuted();
 					}
 					
 					/*video control shortcuts*/
-					this.realPlayer.playAndPause = ()=>{
-						if(this.realPlayer.getPlayerState() == YT.PlayerState.PAUSED){
-							this.realPlayer.playVideo();
+					this.body.playAndPause = ()=>{
+						if(this.body.getPlayerState() == YT.PlayerState.PAUSED){
+							this.body.playVideo();
 						}else{
-							this.realPlayer.pauseVideo();
+							this.body.pauseVideo();
 						}
 					};
-					this.realPlayer.getUpToDate = () => {
-						this.realPlayer.setPlaybackRate(2);/*Once it gets to the newest, the video would pause for seconds and auto-set the speed to 1*/
+					this.body.getUpToDate = () => {
+						this.body.setPlaybackRate(2);/*Once it gets to the newest, the video would pause for seconds and auto-set the speed to 1*/
 						notifi = createNotifi("adjusting", "正在縮短時間差，請稍待……");
 					}
 					window.addEventListener('keydown', (event)=>{
@@ -197,8 +210,8 @@
 							/*Volume Up*/
 							case "+":
 							case "ArrowRight":
-								var vol = this.realPlayer.getVolume();
-								this.realPlayer.setVolume(vol + 5);
+								var vol = this.body.getVolume();
+								this.body.setVolume(vol + 5);
 								createNotifi(
 									"volume",
 									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%",
@@ -213,9 +226,9 @@
 							/*Volume Down*/
 							case "-":
 							case "ArrowLeft":
-								var vol = this.realPlayer.getVolume();
-								this.realPlayer.setVolume(vol + 5);
-								this.realPlayer.setVolume(vol - 5);
+								var vol = this.body.getVolume();
+								this.body.setVolume(vol + 5);
+								this.body.setVolume(vol - 5);
 								createNotifi(
 									"volume",
 									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%",
@@ -229,7 +242,7 @@
 
 							/*Pause & Play*/
 							case " ":
-								this.realPlayer.playAndPause();
+								this.body.playAndPause();
 								break;
 
 							/*FullScreen*/
@@ -246,7 +259,7 @@
 			};
 
 			function fullscreen(newState){
-				if(newState !== "undefined"){
+				if(typeof(newState) !== "undefined"){
 					if(newState == true || newState == "on"){ //turn on fullscreen
 						document.documentElement.requestFullscreen();
 					}else if(newState == false || newState == "off"){ //turn off fullscreen
