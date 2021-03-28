@@ -1,0 +1,63 @@
+OldNewTV: Structure
+
+TV Control Functions:
+	1.	選台
+		->	Basic:	swtichChannel(number)
+	2.	調音量
+		->	Trans:	int player.volume(percentage)
+	3.	靜音
+		->	Trans:	bool player.mute("switch"|"on"|"off"|true|false|1|0)
+	4.	頻道列表
+		-> 	Basic:	showChannelList()
+	5.	設定
+		->	Basic:	showSetting()
+					# press [*] to open
+	6.	全螢幕
+		->	Basic:  fullScreen("switch"|"on"|"off")
+					# "switch":  		if on, than off; if off, than on
+					# "on"|true|1: 		turn on
+					# "off"|false|0: 	turn off
+					# stay clear: 		get the mute state
+
+Channel list form:
+	$ChannelNumber:String$ :{
+		name: $ChannelName:String$,
+		server: $ServerName:String$, // "yt" || "m3u8"
+		ytCode: $YoutubeVideoCode:String$,
+		ytType: "Stream" || "Video" || "List",
+		m3u8URL: ""
+	}
+	//white
+	: {
+		name: "",
+		server: "yt [Future: m3u8]",
+		ytCode: "",
+		ytType: "Stream" || "Video" || "List",
+		m3u8URL: ""
+	}
+	
+player structure:
+		string player.server
+
+		void player.destroy()
+			# reset the $("#player") dom
+		
+		void player.playVideo()
+		
+		void player.pauseVideo()
+		
+		int player.volume(percentage)
+			# 0 <= percentage <= 100
+			# stay clear: get the volume without change it
+			
+		bool player.mute("switch"|"on"|"off"|true|false|1|0)
+			# "switch":  		if on, than off; if off, than on
+			# "on"|true|1: 		turn on	
+			# "off"|false|0: 	turn off
+			# stay clear: 		return the mute state
+		
+		obj player.body
+			# the real player
+		
+		dom player.dom
+			# the player element

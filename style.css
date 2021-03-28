@@ -1,0 +1,25 @@
+div#channelList{
+	background-color: rgba(0,0,0,.5);
+	display: none; 
+	width: 40vw; 
+	height: 80vh; 
+	position: absolute; 
+	top:10vh; 
+	left: 55vw; 
+	line-height: normal;
+	overflow-x: auto;
+	border-radius: 10px;
+	padding-left: 0;
+}
+
+div#channelList > a{
+	text-decoration: none;
+	display: block;
+	color: #FFF;
+	font-size: 36px;
+	padding: 10px;.
+}
+div#channelList > a:hover, div#channelList > a:focus{
+	transition: background-color .5s;
+	background-color: #0000FF;
+}

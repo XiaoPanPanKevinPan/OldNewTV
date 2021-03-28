@@ -2,282 +2,11 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.4.roc1100317_1514</title>
+		<title>Online TV - v0.4.roc1100328_1148</title>
 		<script src="presetSettings.js"><!-- The preset settings, such as channel-number pairs. --></script>
-		<script>/*Channel Manager*/
-			function switchChannel(number){
-				
-				channel = presetChannelList[number]; //get info of the channel
-				if(typeof(channel)=="undefined"){
-					console.log("ERR: The required channel doesn't exist.");
-					return -1;
-				}
-				if(channel.server = "yt"){
-					let loop = false, ytAutoUpToDate = false;
-					if(channel.ytType == "List" || channel.ytType == "Video"){
-						loop = true;
-					}else if(channel.ytType == "Stream"){
-						ytAutoUpToDate = true;
-					}else{
-						console.log("ERR: \"ytType\" should be one of [\"List\", \"Video\", \"Stream\"], instead of \"%s\".", channel.ytType);
-						return -1;
-					}
-					
-					if(player.server = "yt"){
-						player.destroy();
-					}
-					
-					player =  new playerStructure.yt(channel.ytType, channel.ytCode, loop, ytAutoUpToDate);
-					console.log("O K: NewChannel!");
- 					return 0;
-				}
-				console.log("ERR: \"server\" should be one of [\"yt\"(, \"m3u8\")], instead of \"%s\".", channel.server);
-				return -1;
-			}
-
-			var newChannelNumber = ""; /*the number of video*/
-			window.addEventListener("keydown", (event)=>{/*when user is switching the channel*/
-				whetherChangedNumberString = true;
-				if(
-					!event.ctrlKey &&
-					!event.altKey &&
-					!event.shiftKey &&
-					!event.metaKey &&  ["0","1","2","3","4","5","6","7","8","9"].includes(event.key)
-				){/*type in number*/
-					newChannelNumber += event.key;
-				}else{/*remove number at the end*/
-					switch(event.key){
-						case "Delete":
-							newChannelNumber = "";
-							break;
-						case "Backspace":
-							newChannelNumber = newChannelNumber.slice(0, newChannelNumber.length-1);
-							break;
-						case "Enter":
-							whetherChangedNumberString = false;
-							cleanAllNotifi();
-							if(switchChannel(newChannelNumber)==0 /*Success*/){
-								createNotifi(
-									"newChannelNumber",
-									"OK",
-									3, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										right: "2.5vh",
-										"background-color": "rgba(0,255,0,0.5)"
-								});
-							}else{/* -1, failed*/
-								createNotifi(
-									"newChannelNumber",
-									"Not Exists",
-									3, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										right: "2.5vh",
-										"background-color": "rgba(255,0,0,0.5)"
-								});
-							}
-							newChannelNumber = "";
-							break;
-						default:
-							whetherChangedNumberString = false;
-					}
-				}
-				/*show the number on the screen*/
-				if(whetherChangedNumberString == true){
-					createNotifi(
-						"newChannelNumber",
-						newChannelNumber,
-						5, {
-							display: "inline",
-							position: "fixed",
-							top: "2.5vh",
-							right: "2.5vh"
-					});
-				}
-			});
-
-		</script>
-		<script>/*Control*/
-			player = {}; // Global Variable.
-			playerStructure = { /*the structure of the player*/
-				yt: function(type, ID, whetherToLoop, whetherAutoGetUpToDate){
-					this.server = "yt";
-					
-					/*Config the YT Player*/
-					let playerVars = {
-						controls: 0,
-						disablekb: 1, /* disablekb is to remove all the keyboard shortcuts (especially NUMBER). Add back or change some of them later. */
-						iv_load_policy:3,
-						rel: 0,
-						fs: 0,
-					}
-					if(type=="List"){
-						playerVars.listType = "playlist";
-						playerVars.list = ID;
-					}
-					if(whetherToLoop == true){
-						playerVars.loop= "1";
-						if(type=="Video"){
-							playerVars.playlist = ID;
-						}
-					}
-
-					/*Create the YT Player*/
-					this.body = new YT.Player("ytPlayer", {
-						height: "100%",
-						width: "100%",
-						videoId: (type=="Stream" || type=="Video")?ID:"",
-						playerVars: playerVars,
-						events:{
-							"onReady": (event)=>{
-								/*autoplay & try to get up-to-date*/
-								this.body.playVideo();
-								this.body.toggledEventID = []; /**/
-							},
-							"onStateChange": (whetherAutoGetUpToDate)?(event)=>{
-								var state = event.data;
-								if(
-									state == -1 /*unstarted*/ ||
-									state == YT.PlayerState.PAUSED ||
-									state == YT.PlayerState.CUED
-								){
-									/*Here we use a weird way to detect if an event has been triggered or not. If true, than ignore it. We couldn't use this.body.removeEventListener("onStateChange", func) because this part of the api seems to be broken.*/
-									var ID = Date.now();
-									var func = (event) => {
-										if(this.body.toggledEventID.includes(ID)){
-											return;
-										}
-
-										var state = event.data;
-										if(
-											state == YT.PlayerState.PLAYING ||
-											state == YT.PlayerState.BUFFERING
-										){
-											this.body.getUpToDate();
-										}
-										this.body.toggledEventID.push(ID);
-										return;
-									};
-									this.body.addEventListener("onStateChange", func);
-									return;
-								}
-							}:(event)=>{}
-						}
-					});
-					
-					/*the united and universal functions*/
-					this.dom = document.querySelector("ytPlayer");
-					this.destroy = ()=>{
-						this.body.destroy();
-					};
-					this.volume = (vol)=>{
-						if(typeof(vol)=="NUMBER" && 0<=vol && vol<=100){
-							this.body.setVolume(vol);
-						}
-						return this.body.getVolume();
-						/*A known issue: The returned value isn't the new volume but the old one.*/
-					}
-					this.mute = (state) =>{
-						if(typeof(state)!="undefined"){
-							if(["on", true, 1, "1"].includes(state)){
-								this.body.mute();
-							}else if(["off", false, 0, "0"].includes(state)){
-								this.body.unMute();
-							}else if("switch"){
-								(this.body.isMuted())?this.body.unMute():this.body.mute();
-							}
-						}
-						return this.body.isMuted();
-					}
-					
-					/*video control shortcuts*/
-					this.body.playAndPause = ()=>{
-						if(this.body.getPlayerState() == YT.PlayerState.PAUSED){
-							this.body.playVideo();
-						}else{
-							this.body.pauseVideo();
-						}
-					};
-					this.body.getUpToDate = () => {
-						this.body.setPlaybackRate(2);/*Once it gets to the newest, the video would pause for seconds and auto-set the speed to 1*/
-						notifi = createNotifi("adjusting", "正在縮短時間差，請稍待……");
-					}
-					window.addEventListener('keydown', (event)=>{
-						switch(event.key){
-							/*Volume Up*/
-							case "+":
-							case "ArrowRight":
-								var vol = this.body.getVolume();
-								this.body.setVolume(vol + 5);
-								createNotifi(
-									"volume",
-									"Vol:" + ((vol<=95)?(vol + 5):(100)) + "%",
-									5, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										left: "2.5vh",
-								});
-								break;
-
-							/*Volume Down*/
-							case "-":
-							case "ArrowLeft":
-								var vol = this.body.getVolume();
-								this.body.setVolume(vol + 5);
-								this.body.setVolume(vol - 5);
-								createNotifi(
-									"volume",
-									"Vol:" + ((vol>=5)?(vol - 5):(0)) + "%",
-									5, {
-										display: "inline",
-										position: "fixed",
-										top: "2.5vh",
-										left: "2.5vh",
-								});
-								break;
-
-							/*Pause & Play*/
-							case " ":
-								this.body.playAndPause();
-								break;
-
-							/*FullScreen*/
-							case "f":
-								fullscreen("switch");
-
-							/*Clean the notification*/
-							case "Escape":
-								cleanAllNotifi();
-						}
-					});
-					//return this;
-				}
-			};
-
-			function fullscreen(newState){
-				if(typeof(newState) !== "undefined"){
-					if(newState == true || newState == "on"){ //turn on fullscreen
-						document.documentElement.requestFullscreen();
-					}else if(newState == false || newState == "off"){ //turn off fullscreen
-						document.exitFullscreen();
-					}if(newState == "switch"){ //switch fullscreen
-						if(!document.fullscreenElement){
-							document.documentElement.requestFullscreen();
-						}else{
-							document.exitFullscreen();
-						}
-					}
-				}
-				return (!document.fullscreenElement)?false:true; //return fullscreen state
-			}
-
-
-
-		</script>
+		<script src="channelMgr.js"></script>
+		<script src="control.js"></script>
+		<link rel="stylesheet" href="style.css"></style>
 		<script>/*Notification Manger*/
 			notiList = [];
 			function createNotifi(id, msg, lastingSecond, styleList){
@@ -308,7 +37,7 @@
 
 					if(typeof lastingSecond == "number" && lastingSecond > 0 ){
 						window.setTimeout(()=>{noti.remove()}, lastingSecond * 1000);
-					}else if(typeof lastingSecond == "string" && ["infinity", "unlimited", "unrestricted", "forever"].includes(lastingSecond)){x
+					}else if(typeof lastingSecond == "string" && ["infinity", "unlimited", "unrestricted", "forever"].includes(lastingSecond)){
 						// do nothing
 					}else{
 						window.setTimeout(()=>{noti.remove()}, 10000);
@@ -377,6 +106,28 @@
 		</div>
 		<div id="notifiHolder" style="width: 100vw; position: absolute; height:0; top: 10vh; left: 0; padding: 0; margin: 0; text-align: center; pointer-events: none">
 		</div>
-
+		<div id="channelListHolder" style="width:0; height:0; line-height:0;">
+			<div id="channelList"></div>
+			<script>
+				/*when '.' is down*/
+				document.body.addEventListener("keydown", (event)=>{
+					var chListDom = document.querySelector("#channelList");
+					if(event.key == "."){
+						if(chListDom.style["display"] == "none"){
+							for(let channel in presetChannelList){
+								chListDom.innerHTML += 
+									"<a " + "href=" + '"' + "javascript: (()=>{switchChannel('" + channel + "');})();" + '"' + ">" + 
+										channel + presetChannelList[channel].name +
+									"</a>";
+							}
+							chListDom.style["display"] = "block";
+						}else{
+							chListDom.style["display"] = "none";
+							chListDom.innerHTML = "";
+						}
+					}
+				});
+			</script>
+		</div>
 	</body>
 </html>
