@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Online TV - v0.4.roc1100328_1148</title>
+		<title>Online TV - v0.4.roc1100418_2045</title>
 		<script src="presetSettings.js"><!-- The preset settings, such as channel-number pairs. --></script>
 		<script src="channelMgr.js"></script>
 		<script src="control.js"></script>
@@ -109,18 +109,36 @@
 		<div id="channelListHolder" style="width:0; height:0; line-height:0;">
 			<div id="channelList"></div>
 			<script>
+				/*use up and down to change the selection*/
+				document.querySelector("#channelList").addEventListener("keydown", (event)=>{
+					if(event.key == "ArrowDown" || event.key == "Down"){
+						document.activeElement.nextElementSibling.focus();
+						event.preventDefault();
+						event.stopPropagation();
+					}else if (event.key == "ArrowUp" || event.key == "Up"){
+						document.activeElement.previousElementSibling.focus();
+						event.preventDefault();
+						event.stopPropagation();
+					}else if (event.key == "Enter"){
+						event.stopPropagation();
+					}
+				});
 				/*when '.' is down*/
 				document.body.addEventListener("keydown", (event)=>{
 					var chListDom = document.querySelector("#channelList");
 					if(event.key == "."){
 						if(chListDom.style["display"] == "none"){
+							/*--push the channel into channel list dom--*/
 							for(let channel in presetChannelList){
 								chListDom.innerHTML += 
 									"<a " + "href=" + '"' + "javascript: (()=>{switchChannel('" + channel + "');})();" + '"' + ">" + 
 										channel + presetChannelList[channel].name +
 									"</a>";
 							}
-							chListDom.style["display"] = "block";
+							/*--/push the channel into channel list dom*/
+							chListDom.style["display"] = "block"; /*show the dom*/
+							
+							chListDom.firstElementChild.focus();/*focus on the first channel*/
 						}else{
 							chListDom.style["display"] = "none";
 							chListDom.innerHTML = "";
