@@ -19,52 +19,52 @@ var presetChannelList = {
 	"10": {
 		name: "中視新聞 CTV News",
 		server: "yt",
-		ytCode: "lSZZ3YRsW1w",
+		ytCode: "TCnaIE_SAtM",
 		ytType: "Stream"
 	},
 	"12": {
 		name: "華視新聞 CTS News",
 		server: "yt",
-		ytCode: "-pvROC_MdYM",
+		ytCode: "wM0g8EoUZ_E",
 		ytType: "Stream"
 	},
 	"13": {
 		name: "公共電視 PTS News",
 		server: "yt",
-		ytCode: "ED4QXd5xAco",
+		ytCode: "4Uc00FPs27M",
 		ytType: "Stream"
 	},
 	"14": {
 		name: "公視台語台 PTS Taiwanese Hokkian",
 		server: "yt",
-		ytCode: "HyhkhY0tTjo",
+		ytCode: "6KlRR_DGhmI",
 		ytType: "Stream"
 	},
-	"51": {
+	/*"51": {
 		name: "東森新聞",
 		server: "yt",
 		ytCode: "63RmMXCd_bQ",
 		ytType: "Stream"
-	},
+	},*/
 	"52": {
 		name: "中天新聞 CTi News",
 		server: "yt",
-		ytCode: "5tQBwbyQ-Fw",
+		ytCode: "_QbRXRnHMVY",
 		ytType: "Stream"
 	},
 	"53": {
 		name: "民視新聞",
 		server: "yt",
-		ytCode: "XxJKnDLYZz4",
+		ytCode: "ylYJSBUgaMA",
 		ytType: "Stream"
 	},
 	"54": {
 		name: "三立新聞",
 		server: "yt",
-		ytCode: "4ZVUmEUFwaY",
+		ytCode: "EB4g7wecgTI",
 		ytType: "Stream"
 	},
-	"55": {
+	/*"55": {
 		name: "TVBS News",
 		server: "yt",
 		ytCode: "A4FbB8UhNRs",
@@ -75,29 +75,29 @@ var presetChannelList = {
 		server: "yt",
 		ytCode: "EmuMuVyAjh4",
 		ytType: "Stream"
-	},
+	},*/
 	"57": {
 		name: "東森財經",
 		server: "yt",
-		ytCode: "68lLQ7hkdzU",
+		ytCode: "WHEPzbFA3hw",
 		ytType: "Stream"
 	},
 	"114": {
 		name: "大愛電視2 DaAiVideo 2",
 		server: "yt",
-		ytCode: "8ddDTi-gzQA",
+		ytCode: "OKvWtVoDR8I",
 		ytType: "Stream"
 	},
-	"994": {
+	/*"994": {
 		name: "客家電視 Hakka TV",
 		server: "yt",
 		ytCode: "LWwepk1p5kE",
 		ytType: "Stream"
-	},
+	},*/
 	"999":{
 		name: "TEST - You Will Be Okay",
 		server: "yt",
-		ytCode: "EqhLSJko_6A",
+		ytCode: "A5or5PyS3KQ",
 		ytType: "Video"
 	}/*,
 	"995": {
