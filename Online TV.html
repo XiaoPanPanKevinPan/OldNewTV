@@ -91,7 +91,7 @@
 							counter += 1;
 							if(counter == 1){
 								timeout = setTimeout(()=>{/*play or pause video*/
-									player.playAndPause();
+									player.body.playAndPause();
 									counter = 0;
 								}, 250);
 							}else if(counter >= 2){/*fullscreen*/
