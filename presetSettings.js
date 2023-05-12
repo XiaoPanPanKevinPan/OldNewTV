@@ -49,7 +49,7 @@ var presetChannelList = {
 	"52": {
 		name: "中天新聞 CTi News",
 		server: "yt",
-		ytCode: "_QbRXRnHMVY",
+		ytCode: "oIgbl7t0S_w",
 		ytType: "Stream"
 	},
 	"53": {
@@ -61,7 +61,7 @@ var presetChannelList = {
 	"54": {
 		name: "三立新聞",
 		server: "yt",
-		ytCode: "EB4g7wecgTI",
+		ytCode: "jlldIiGA5bU",
 		ytType: "Stream"
 	},
 	/*"55": {
@@ -87,19 +87,19 @@ var presetChannelList = {
 		server: "yt",
 		ytCode: "OKvWtVoDR8I",
 		ytType: "Stream"
-	},
-	/*"994": {
+	}/*,
+	"994": {
 		name: "客家電視 Hakka TV",
 		server: "yt",
 		ytCode: "LWwepk1p5kE",
 		ytType: "Stream"
-	},*/
+	}*//*,
 	"999":{
 		name: "TEST - You Will Be Okay",
 		server: "yt",
 		ytCode: "A5or5PyS3KQ",
 		ytType: "Video"
-	}/*,
+	}*//*,
 	"995": {
 		name: "台灣地震監視 Taiwan Earthquake Monitor",
 		server: "yt",
